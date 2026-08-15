@@ -1,3 +1,31 @@
+# InvoiceHub Backend
+
+REST API untuk aplikasi InvoiceHub, dibangun dengan Laravel dan PostgreSQL.
+
+## Setup lokal
+
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+php artisan serve
+```
+
+Dokumentasi tersedia di:
+
+- [Authentication API](docs/AUTHENTICATION_API.md)
+- [Email delivery dengan Gmail SMTP](docs/EMAIL_DELIVERY.md)
+
+Jalankan pemeriksaan kode dan test dengan:
+
+```bash
+vendor/bin/pint --test
+php artisan test
+```
+
+---
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
