@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -24,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Gate::define('manage-blog', fn (User $user): bool => $user->isAdmin());
+
         $this->configurePasswordRules();
         $this->configureRateLimiters();
     }
@@ -43,6 +47,12 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiters(): void
     {
+        RateLimiter::for('blog-public', fn (Request $request): Limit => Limit::perMinute(120)
+            ->by($request->ip()));
+
+        RateLimiter::for('blog-management', fn (Request $request): Limit => Limit::perMinute(60)
+            ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
         RateLimiter::for('auth-register', fn (Request $request): Limit => Limit::perMinute(5)
             ->by($request->ip()));
 

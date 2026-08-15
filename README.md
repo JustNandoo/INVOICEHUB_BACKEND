@@ -16,6 +16,7 @@ Dokumentasi tersedia di:
 
 - [Authentication API](docs/AUTHENTICATION_API.md)
 - [Email delivery dengan Gmail SMTP](docs/EMAIL_DELIVERY.md)
+- [Public Blog API](docs/BLOG_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 
