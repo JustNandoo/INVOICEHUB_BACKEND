@@ -19,6 +19,7 @@ Dokumentasi tersedia di:
 - [Public Blog API](docs/BLOG_API.md)
 - [Invoice API](docs/INVOICE_API.md)
 - [Reconciliation API](docs/RECONCILIATION_API.md)
+- [Tax Report API](docs/TAX_REPORT_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 
