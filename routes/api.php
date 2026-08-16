@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Reconciliation\BankAccountController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionImportController;
 use App\Http\Controllers\Api\Reconciliation\ReconciliationController;
+use App\Http\Controllers\Api\Subscription\SubscriptionController;
 use App\Http\Controllers\Api\Tax\TaxAuditFindingController;
 use App\Http\Controllers\Api\Tax\TaxpayerProfileController;
 use App\Http\Controllers\Api\Tax\TaxReportController;
@@ -29,6 +30,17 @@ Route::prefix('v1')
         Route::post('/invoices/{invoice}/send', [InvoiceController::class, 'send'])->whereNumber('invoice');
         Route::post('/invoices/{invoice}/payments', [InvoiceController::class, 'storePayment'])->whereNumber('invoice');
         Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->whereNumber('invoice');
+    });
+
+Route::get('/v1/subscriptions/plans', [SubscriptionController::class, 'plans'])
+    ->middleware('throttle:60,1');
+
+Route::prefix('v1/subscription')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:60,1'])
+    ->group(function (): void {
+        Route::get('/', [SubscriptionController::class, 'show']);
+        Route::get('/usage', [SubscriptionController::class, 'usage']);
+        Route::get('/payment-history', [SubscriptionController::class, 'paymentHistory']);
     });
 
 Route::prefix('v1')
@@ -55,7 +67,10 @@ Route::prefix('v1/profile')
     });
 
 Route::prefix('v1')
-    ->middleware(['auth:sanctum', 'verified', 'throttle:reconciliation-management'])
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:reconciliation-management',
+        'subscription.feature:reconciliation.automatic',
+    ])
     ->group(function (): void {
         Route::get('/bank-accounts', [BankAccountController::class, 'index']);
         Route::post('/bank-accounts/{bankAccount}/sync', [BankAccountController::class, 'sync'])->whereNumber('bankAccount');
@@ -75,23 +90,29 @@ Route::prefix('v1')
     });
 
 Route::prefix('v1')
-    ->middleware(['auth:sanctum', 'verified', 'throttle:tax-report-management'])
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:tax-report-management',
+        'subscription.feature:tax.monthly_report',
+    ])
     ->group(function (): void {
         Route::get('/tax-profile', [TaxpayerProfileController::class, 'show']);
         Route::put('/tax-profile', [TaxpayerProfileController::class, 'update']);
 
         Route::get('/tax-reports/overview', [TaxReportController::class, 'overview']);
         Route::get('/tax-reports/monthly', [TaxReportController::class, 'monthly']);
-        Route::get('/tax-reports/{year}/annual-pdf', [TaxReportController::class, 'annualPdf'])->whereNumber('year');
+        Route::get('/tax-reports/{year}/annual-pdf', [TaxReportController::class, 'annualPdf'])
+            ->middleware('subscription.feature:tax.annual_report')->whereNumber('year');
         Route::get('/tax-reports/{year}/{month}', [TaxReportController::class, 'show'])->whereNumber(['year', 'month']);
         Route::post('/tax-reports/{year}/{month}/recalculate', [TaxReportController::class, 'recalculate'])->whereNumber(['year', 'month']);
         Route::post('/tax-reports/{year}/{month}/finalize', [TaxReportController::class, 'finalize'])->whereNumber(['year', 'month']);
         Route::post('/tax-reports/{year}/{month}/mark-reported', [TaxReportController::class, 'markReported'])->whereNumber(['year', 'month']);
         Route::get('/tax-reports/{year}/{month}/pdf', [TaxReportController::class, 'monthlyPdf'])->whereNumber(['year', 'month']);
 
-        Route::get('/tax-audit-findings', [TaxAuditFindingController::class, 'index']);
-        Route::post('/tax-audit-findings/{finding}/include', [TaxAuditFindingController::class, 'include'])->whereNumber('finding');
-        Route::post('/tax-audit-findings/{finding}/resolve', [TaxAuditFindingController::class, 'resolve'])->whereNumber('finding');
+        Route::middleware('subscription.feature:tax.automated_audit')->group(function (): void {
+            Route::get('/tax-audit-findings', [TaxAuditFindingController::class, 'index']);
+            Route::post('/tax-audit-findings/{finding}/include', [TaxAuditFindingController::class, 'include'])->whereNumber('finding');
+            Route::post('/tax-audit-findings/{finding}/resolve', [TaxAuditFindingController::class, 'resolve'])->whereNumber('finding');
+        });
     });
 
 Route::prefix('v1/admin/blogs')

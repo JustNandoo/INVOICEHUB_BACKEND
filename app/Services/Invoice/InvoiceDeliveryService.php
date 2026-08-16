@@ -5,6 +5,7 @@ namespace App\Services\Invoice;
 use App\Mail\InvoiceMail;
 use App\Models\Invoice;
 use App\Models\User;
+use App\Services\Subscription\EntitlementService;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 
@@ -13,6 +14,7 @@ class InvoiceDeliveryService
     public function __construct(
         private readonly InvoicePdfService $pdf,
         private readonly InvoiceService $invoices,
+        private readonly EntitlementService $entitlements,
     ) {}
 
     /**
@@ -22,6 +24,9 @@ class InvoiceDeliveryService
     public function send(Invoice $invoice, User $user, array $data): array
     {
         $channel = $data['channel'];
+        if ($channel === 'whatsapp') {
+            $this->entitlements->require($user, 'whatsapp.reminder');
+        }
         $recipient = trim((string) ($data['recipient'] ?? $this->defaultRecipient($invoice, $channel)));
 
         if ($recipient === '') {

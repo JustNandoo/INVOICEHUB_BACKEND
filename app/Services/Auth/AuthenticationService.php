@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Services\Subscription\SubscriptionService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -10,6 +11,8 @@ use Laravel\Sanctum\NewAccessToken;
 
 class AuthenticationService
 {
+    public function __construct(private readonly SubscriptionService $subscriptions) {}
+
     /**
      * A non-secret hash used to keep failed login timing consistent when an email is unknown.
      */
@@ -20,13 +23,18 @@ class AuthenticationService
      */
     public function register(array $attributes): User
     {
-        return DB::transaction(fn (): User => User::query()->create([
-            'name' => $attributes['fullName'],
-            'business_name' => $attributes['businessName'],
-            'email' => $attributes['email'],
-            'password' => $attributes['password'],
-            'terms_accepted_at' => now(),
-        ]));
+        return DB::transaction(function () use ($attributes): User {
+            $user = User::query()->create([
+                'name' => $attributes['fullName'],
+                'business_name' => $attributes['businessName'],
+                'email' => $attributes['email'],
+                'password' => $attributes['password'],
+                'terms_accepted_at' => now(),
+            ]);
+            $this->subscriptions->assignDefault($user);
+
+            return $user;
+        });
     }
 
     public function authenticate(string $email, string $password): ?User

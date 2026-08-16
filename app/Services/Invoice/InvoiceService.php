@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceActivity;
 use App\Models\InvoicePayment;
 use App\Models\User;
+use App\Services\Subscription\EntitlementService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +18,7 @@ class InvoiceService
     public function __construct(
         private readonly InvoiceCalculator $calculator,
         private readonly InvoiceNumberService $numbers,
+        private readonly EntitlementService $entitlements,
     ) {}
 
     /**
@@ -25,6 +27,10 @@ class InvoiceService
     public function create(User $user, array $data): Invoice
     {
         return DB::transaction(function () use ($user, $data): Invoice {
+            // Serializes invoice creation per owner so plan limits cannot be bypassed by concurrent requests.
+            User::query()->whereKey($user->id)->lockForUpdate()->firstOrFail();
+            $this->entitlements->assertCanCreateInvoice($user);
+
             $issueDate = CarbonImmutable::createFromFormat('Y-m-d', $data['issueDate'])->startOfDay();
             $customer = $this->customerSnapshot($user, $data);
             $taxRate = $this->taxRateToBasisPoints($data['taxRate'] ?? 0);

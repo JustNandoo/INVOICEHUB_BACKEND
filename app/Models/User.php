@@ -74,6 +74,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(TaxPeriodReport::class);
     }
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscription::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *
