@@ -18,6 +18,7 @@ Dokumentasi tersedia di:
 - [Email delivery dengan Gmail SMTP](docs/EMAIL_DELIVERY.md)
 - [Public Blog API](docs/BLOG_API.md)
 - [Invoice API](docs/INVOICE_API.md)
+- [Reconciliation API](docs/RECONCILIATION_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 
