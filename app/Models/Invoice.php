@@ -76,6 +76,11 @@ class Invoice extends Model
         return $this->hasMany(InvoiceActivity::class)->orderByDesc('occurred_at')->orderByDesc('id');
     }
 
+    public function reconciliations(): HasMany
+    {
+        return $this->hasMany(Reconciliation::class);
+    }
+
     public function effectiveStatus(?CarbonInterface $today = null): string
     {
         $today ??= now();

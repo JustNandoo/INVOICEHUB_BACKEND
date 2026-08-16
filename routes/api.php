@@ -6,6 +6,10 @@ use App\Http\Controllers\Api\Blog\BlogController;
 use App\Http\Controllers\Api\Blog\BlogManagementController;
 use App\Http\Controllers\Api\Customer\CustomerSearchController;
 use App\Http\Controllers\Api\Invoice\InvoiceController;
+use App\Http\Controllers\Api\Reconciliation\BankAccountController;
+use App\Http\Controllers\Api\Reconciliation\BankTransactionController;
+use App\Http\Controllers\Api\Reconciliation\BankTransactionImportController;
+use App\Http\Controllers\Api\Reconciliation\ReconciliationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -22,6 +26,26 @@ Route::prefix('v1')
         Route::post('/invoices/{invoice}/send', [InvoiceController::class, 'send'])->whereNumber('invoice');
         Route::post('/invoices/{invoice}/payments', [InvoiceController::class, 'storePayment'])->whereNumber('invoice');
         Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->whereNumber('invoice');
+    });
+
+Route::prefix('v1')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:reconciliation-management'])
+    ->group(function (): void {
+        Route::get('/bank-accounts', [BankAccountController::class, 'index']);
+        Route::post('/bank-accounts/{bankAccount}/sync', [BankAccountController::class, 'sync'])->whereNumber('bankAccount');
+
+        Route::get('/bank-transactions', [BankTransactionController::class, 'index']);
+        Route::post('/bank-transactions/imports', [BankTransactionImportController::class, 'store']);
+        Route::get('/bank-transactions/imports/{import}', [BankTransactionImportController::class, 'show'])->whereNumber('import');
+        Route::get('/bank-transactions/{bankTransaction}', [BankTransactionController::class, 'show'])->whereNumber('bankTransaction');
+        Route::get('/bank-transactions/{bankTransaction}/candidates', [BankTransactionController::class, 'candidates'])->whereNumber('bankTransaction');
+        Route::post('/bank-transactions/{bankTransaction}/ignore', [BankTransactionController::class, 'ignore'])->whereNumber('bankTransaction');
+        Route::post('/bank-transactions/{bankTransaction}/reject-candidate', [BankTransactionController::class, 'rejectCandidate'])->whereNumber('bankTransaction');
+
+        Route::get('/reconciliation/summary', [ReconciliationController::class, 'summary']);
+        Route::get('/reconciliations', [ReconciliationController::class, 'index']);
+        Route::post('/reconciliations', [ReconciliationController::class, 'store']);
+        Route::post('/reconciliations/{reconciliation}/reverse', [ReconciliationController::class, 'reverse'])->whereNumber('reconciliation');
     });
 
 Route::prefix('v1/admin/blogs')
