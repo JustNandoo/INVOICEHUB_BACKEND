@@ -154,6 +154,7 @@ class InvoiceApiTest extends TestCase
     public function test_whatsapp_delivery_publishes_draft_and_records_activity(): void
     {
         [$user, $invoice] = $this->createInvoiceThroughApi();
+        $this->activatePlan($user, 'basic');
 
         $this->withToken($user->createToken('send')->plainTextToken)
             ->postJson("/api/v1/invoices/{$invoice->id}/send", [

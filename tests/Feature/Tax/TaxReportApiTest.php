@@ -30,6 +30,7 @@ class TaxReportApiTest extends TestCase
     public function test_user_can_save_tax_profile_and_npwp_is_encrypted_and_masked(): void
     {
         $user = User::factory()->create();
+        $this->activatePlan($user, 'pro');
 
         $this->withToken($this->token($user))->putJson('/api/v1/tax-profile', [
             'taxpayerType' => 'entity',
@@ -183,6 +184,7 @@ class TaxReportApiTest extends TestCase
 
     private function profile(User $user, string $type): void
     {
+        $this->activatePlan($user, 'pro');
         $this->app->make(TaxpayerProfileService::class)->update($user, [
             'taxpayerType' => $type, 'taxpayerName' => $user->name, 'businessName' => $user->business_name,
         ]);

@@ -34,6 +34,9 @@ class AuthenticationApiTest extends TestCase
         $this->assertTrue(Hash::check('Secure1234', $user->password));
         $this->assertNull($user->email_verified_at);
         $this->assertNotNull($user->terms_accepted_at);
+        $this->assertDatabaseHas('user_subscriptions', [
+            'user_id' => $user->id, 'status' => 'active', 'source' => 'default',
+        ]);
         Notification::assertSentTo($user, VerifyEmailNotification::class);
     }
 

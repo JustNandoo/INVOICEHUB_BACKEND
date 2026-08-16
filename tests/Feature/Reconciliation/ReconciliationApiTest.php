@@ -30,6 +30,7 @@ class ReconciliationApiTest extends TestCase
     public function test_bank_account_list_and_sync_are_scoped_to_owner(): void
     {
         $user = User::factory()->create();
+        $this->activatePlan($user, 'basic');
         $account = BankAccount::factory()->for($user, 'owner')->create(['bank_code' => 'BCA', 'account_number_last_four' => '4412']);
         BankAccount::factory()->create();
         $token = $user->createToken('test')->plainTextToken;
@@ -217,6 +218,7 @@ class ReconciliationApiTest extends TestCase
         [$owner, $account] = $this->ownerAndAccount();
         $transaction = BankTransaction::factory()->for($owner, 'owner')->for($account, 'bankAccount')->create();
         $intruder = User::factory()->create();
+        $this->activatePlan($intruder, 'basic');
 
         $this->withToken($intruder->createToken('test')->plainTextToken)
             ->getJson("/api/v1/bank-transactions/{$transaction->id}")->assertNotFound();
@@ -226,6 +228,7 @@ class ReconciliationApiTest extends TestCase
     private function ownerAndAccount(): array
     {
         $user = User::factory()->create();
+        $this->activatePlan($user, 'basic');
         $account = BankAccount::factory()->for($user, 'owner')->create(['bank_code' => 'BCA']);
 
         return [$user, $account];

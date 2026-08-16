@@ -9,6 +9,7 @@ use App\Models\TaxpayerProfile;
 use App\Models\TaxPeriodReport;
 use App\Models\TaxReportSource;
 use App\Models\User;
+use App\Services\Subscription\EntitlementService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ class TaxReportService
     public function __construct(
         private readonly TaxLedgerService $ledger,
         private readonly TaxAuditService $audit,
+        private readonly EntitlementService $entitlements,
     ) {}
 
     public function profile(User $user): TaxpayerProfile
@@ -89,7 +91,11 @@ class TaxReportService
             );
 
             $this->snapshotSources($report, $user, $year, $month);
-            $report->update(['findings_count' => $this->audit->refresh($user, $report)]);
+            $findingsCount = 0;
+            if ($this->entitlements->has($user, 'tax.automated_audit')) {
+                $findingsCount = $this->audit->refresh($user, $report);
+            }
+            $report->update(['findings_count' => $findingsCount]);
 
             return $report->fresh('taxRule');
         });

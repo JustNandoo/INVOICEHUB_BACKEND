@@ -22,6 +22,7 @@ Dokumentasi tersedia di:
 - [Customer API](docs/CUSTOMER_API.md)
 - [Reconciliation API](docs/RECONCILIATION_API.md)
 - [Tax Report API](docs/TAX_REPORT_API.md)
+- [Subscription API](docs/SUBSCRIPTION_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 
