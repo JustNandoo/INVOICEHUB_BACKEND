@@ -162,7 +162,7 @@ Method: `bank_transfer`, `cash`, `e_wallet`, `marketplace`, `other`. `paidAt` op
 ## Customer search
 
 ```http
-GET /api/v1/customers?search=toko&limit=10
+GET /api/v1/customers/search?search=toko&limit=10
 ```
 
 Hanya pelanggan aktif milik user. Search mencakup nama, email, dan WhatsApp.

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\Blog\BlogController;
 use App\Http\Controllers\Api\Blog\BlogManagementController;
+use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerSearchController;
 use App\Http\Controllers\Api\Invoice\InvoiceController;
 use App\Http\Controllers\Api\Reconciliation\BankAccountController;
@@ -18,8 +19,6 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'verified', 'throttle:invoice-management'])
     ->group(function (): void {
-        Route::get('/customers', CustomerSearchController::class);
-
         Route::get('/invoices/summary', [InvoiceController::class, 'summary']);
         Route::get('/invoices', [InvoiceController::class, 'index']);
         Route::post('/invoices', [InvoiceController::class, 'store']);
@@ -29,6 +28,19 @@ Route::prefix('v1')
         Route::post('/invoices/{invoice}/send', [InvoiceController::class, 'send'])->whereNumber('invoice');
         Route::post('/invoices/{invoice}/payments', [InvoiceController::class, 'storePayment'])->whereNumber('invoice');
         Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->whereNumber('invoice');
+    });
+
+Route::prefix('v1')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:customer-management'])
+    ->group(function (): void {
+        Route::get('/customers/summary', [CustomerController::class, 'summary']);
+        Route::get('/customers/search', CustomerSearchController::class);
+        Route::get('/customers', [CustomerController::class, 'index']);
+        Route::post('/customers', [CustomerController::class, 'store']);
+        Route::get('/customers/{customer}', [CustomerController::class, 'show'])->whereNumber('customer');
+        Route::patch('/customers/{customer}', [CustomerController::class, 'update'])->whereNumber('customer');
+        Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->whereNumber('customer');
+        Route::get('/customers/{customer}/invoices', [CustomerController::class, 'invoices'])->whereNumber('customer');
     });
 
 Route::prefix('v1')
