@@ -14,8 +14,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'business_name', 'email', 'password', 'terms_accepted_at'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable([
+    'name', 'business_name', 'email', 'password', 'terms_accepted_at',
+    'whatsapp', 'whatsapp_normalized', 'city', 'business_type', 'avatar_path',
+    'password_changed_at',
+])]
+#[Hidden(['password', 'remember_token', 'whatsapp_normalized', 'avatar_path'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
@@ -80,6 +84,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'password_changed_at' => 'immutable_datetime',
             'terms_accepted_at' => 'immutable_datetime',
         ];
     }

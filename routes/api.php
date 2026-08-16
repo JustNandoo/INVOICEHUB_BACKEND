@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Blog\BlogManagementController;
 use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerSearchController;
 use App\Http\Controllers\Api\Invoice\InvoiceController;
+use App\Http\Controllers\Api\Profile\ProfileController;
 use App\Http\Controllers\Api\Reconciliation\BankAccountController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionImportController;
@@ -41,6 +42,16 @@ Route::prefix('v1')
         Route::patch('/customers/{customer}', [CustomerController::class, 'update'])->whereNumber('customer');
         Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->whereNumber('customer');
         Route::get('/customers/{customer}/invoices', [CustomerController::class, 'invoices'])->whereNumber('customer');
+    });
+
+Route::prefix('v1/profile')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:profile-management'])
+    ->group(function (): void {
+        Route::get('/', [ProfileController::class, 'show']);
+        Route::patch('/', [ProfileController::class, 'update']);
+        Route::post('/photo', [ProfileController::class, 'uploadPhoto']);
+        Route::delete('/photo', [ProfileController::class, 'deletePhoto']);
+        Route::put('/password', [ProfileController::class, 'changePassword'])->middleware('throttle:profile-password');
     });
 
 Route::prefix('v1')

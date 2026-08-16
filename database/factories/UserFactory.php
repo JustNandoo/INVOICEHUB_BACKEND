@@ -27,6 +27,10 @@ class UserFactory extends Factory
         return [
             'name' => fake()->name(),
             'business_name' => fake()->company(),
+            'whatsapp' => null,
+            'whatsapp_normalized' => null,
+            'city' => null,
+            'business_type' => null,
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
