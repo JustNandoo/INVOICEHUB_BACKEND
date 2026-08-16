@@ -47,6 +47,9 @@ class AppServiceProvider extends ServiceProvider
 
     private function configureRateLimiters(): void
     {
+        RateLimiter::for('invoice-management', fn (Request $request): Limit => Limit::perMinute(120)
+            ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
         RateLimiter::for('blog-public', fn (Request $request): Limit => Limit::perMinute(120)
             ->by($request->ip()));
 
