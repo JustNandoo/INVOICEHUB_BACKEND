@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
@@ -16,9 +17,11 @@ class Customer extends Model
 
     protected $fillable = [
         'user_id',
+        'customer_code',
         'name',
         'email',
         'whatsapp',
+        'whatsapp_normalized',
         'city',
         'address',
         'source',
@@ -33,6 +36,16 @@ class Customer extends Model
     public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
+    }
+
+    public function latestInvoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class)
+            ->whereIn('status', [Invoice::STATUS_UNPAID, Invoice::STATUS_PAID])
+            ->ofMany([
+                'issue_date' => 'max',
+                'id' => 'max',
+            ]);
     }
 
     protected function casts(): array
