@@ -4,7 +4,25 @@ use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\Blog\BlogController;
 use App\Http\Controllers\Api\Blog\BlogManagementController;
+use App\Http\Controllers\Api\Customer\CustomerSearchController;
+use App\Http\Controllers\Api\Invoice\InvoiceController;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:invoice-management'])
+    ->group(function (): void {
+        Route::get('/customers', CustomerSearchController::class);
+
+        Route::get('/invoices/summary', [InvoiceController::class, 'summary']);
+        Route::get('/invoices', [InvoiceController::class, 'index']);
+        Route::post('/invoices', [InvoiceController::class, 'store']);
+        Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->whereNumber('invoice');
+        Route::patch('/invoices/{invoice}', [InvoiceController::class, 'update'])->whereNumber('invoice');
+        Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->whereNumber('invoice');
+        Route::post('/invoices/{invoice}/send', [InvoiceController::class, 'send'])->whereNumber('invoice');
+        Route::post('/invoices/{invoice}/payments', [InvoiceController::class, 'storePayment'])->whereNumber('invoice');
+        Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'downloadPdf'])->whereNumber('invoice');
+    });
 
 Route::prefix('v1/admin/blogs')
     ->middleware(['auth:sanctum', 'verified', 'can:manage-blog', 'throttle:blog-management'])
