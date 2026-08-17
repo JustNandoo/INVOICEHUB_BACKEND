@@ -7,16 +7,42 @@ use App\Http\Controllers\Api\Blog\BlogManagementController;
 use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerSearchController;
 use App\Http\Controllers\Api\Invoice\InvoiceController;
+use App\Http\Controllers\Api\Notification\NotificationController;
+use App\Http\Controllers\Api\Notification\RevenueTargetController;
 use App\Http\Controllers\Api\Profile\ProfileController;
 use App\Http\Controllers\Api\Reconciliation\BankAccountController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionImportController;
 use App\Http\Controllers\Api\Reconciliation\ReconciliationController;
+use App\Http\Controllers\Api\Report\WeeklyFinancialReportController;
 use App\Http\Controllers\Api\Subscription\SubscriptionController;
 use App\Http\Controllers\Api\Tax\TaxAuditFindingController;
 use App\Http\Controllers\Api\Tax\TaxpayerProfileController;
 use App\Http\Controllers\Api\Tax\TaxReportController;
 use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:notification-management'])
+    ->group(function (): void {
+        Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+        Route::patch('/notifications/read-all', [NotificationController::class, 'markAllRead']);
+        Route::get('/notifications', [NotificationController::class, 'index']);
+        Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markRead'])
+            ->whereUuid('notification');
+        Route::delete('/notifications/{notification}', [NotificationController::class, 'destroy'])
+            ->whereUuid('notification');
+
+        Route::get('/revenue-targets/{year}/{month}', [RevenueTargetController::class, 'show'])
+            ->whereNumber(['year', 'month']);
+        Route::put('/revenue-targets/{year}/{month}', [RevenueTargetController::class, 'update'])
+            ->whereNumber(['year', 'month']);
+
+        Route::get('/weekly-reports', [WeeklyFinancialReportController::class, 'index']);
+        Route::get('/weekly-reports/{weeklyReport}', [WeeklyFinancialReportController::class, 'show'])
+            ->whereNumber('weeklyReport');
+        Route::get('/weekly-reports/{weeklyReport}/pdf', [WeeklyFinancialReportController::class, 'pdf'])
+            ->whereNumber('weeklyReport');
+    });
 
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'verified', 'throttle:invoice-management'])

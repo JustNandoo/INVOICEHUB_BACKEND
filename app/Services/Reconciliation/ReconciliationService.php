@@ -2,6 +2,8 @@
 
 namespace App\Services\Reconciliation;
 
+use App\Events\Invoice\InvoicePaid;
+use App\Events\Invoice\InvoicePaymentRecorded;
 use App\Models\BankTransaction;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
@@ -103,6 +105,10 @@ class ReconciliationService
                 'metadata' => ['reconciliationId' => $reconciliation->id, 'bankTransactionId' => $transaction->id],
                 'occurred_at' => now(),
             ]);
+            InvoicePaymentRecorded::dispatch($invoice->id, $payment->id);
+            if ($isPaid) {
+                InvoicePaid::dispatch($invoice->id, $payment->id);
+            }
 
             return $this->load($reconciliation->refresh());
         }, 3);

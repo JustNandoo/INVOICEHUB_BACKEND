@@ -2,6 +2,8 @@
 
 namespace App\Services\Invoice;
 
+use App\Events\Invoice\InvoicePaid;
+use App\Events\Invoice\InvoicePaymentRecorded;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceActivity;
@@ -235,6 +237,10 @@ class InvoiceService
                 'Pembayaran sebesar Rp '.number_format($amount, 0, ',', '.').' melalui '.$data['method'].'.',
                 ['paymentId' => $payment->id, 'amount' => $amount, 'method' => $data['method']],
             );
+            InvoicePaymentRecorded::dispatch($invoice->id, $payment->id);
+            if ($isPaid) {
+                InvoicePaid::dispatch($invoice->id, $payment->id);
+            }
 
             return ['payment' => $payment, 'invoice' => $this->loadDetail($invoice->refresh())];
         }, 3);
