@@ -65,6 +65,9 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('tax-report-management', fn (Request $request): Limit => Limit::perMinute(120)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
 
+        RateLimiter::for('notification-management', fn (Request $request): Limit => Limit::perMinute(120)
+            ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
         RateLimiter::for('blog-public', fn (Request $request): Limit => Limit::perMinute(120)
             ->by($request->ip()));
 

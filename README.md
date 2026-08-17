@@ -23,6 +23,7 @@ Dokumentasi tersedia di:
 - [Reconciliation API](docs/RECONCILIATION_API.md)
 - [Tax Report API](docs/TAX_REPORT_API.md)
 - [Subscription API](docs/SUBSCRIPTION_API.md)
+- [Notification API](docs/NOTIFICATION_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 

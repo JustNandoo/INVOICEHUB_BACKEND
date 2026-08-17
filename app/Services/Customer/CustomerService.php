@@ -2,6 +2,7 @@
 
 namespace App\Services\Customer;
 
+use App\Events\Customer\CustomerCreated;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\User;
@@ -23,7 +24,7 @@ class CustomerService
             $customerCode = $this->numbers->next($user);
             $this->guardUniqueWhatsapp($user, $phone['normalized']);
 
-            return Customer::query()->create([
+            $customer = Customer::query()->create([
                 'user_id' => $user->id,
                 'customer_code' => $customerCode,
                 'name' => trim($data['name']),
@@ -35,6 +36,9 @@ class CustomerService
                 'source' => $data['source'] ?? 'manual',
                 'is_active' => $data['isActive'] ?? true,
             ]);
+            CustomerCreated::dispatch($customer->id);
+
+            return $customer;
         }, 3);
     }
 
