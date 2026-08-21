@@ -1,5 +1,8 @@
 <?php
 
+use App\Jobs\Ai\DispatchFinancialInsightRefresh;
+use App\Jobs\Ai\PruneAiRuns;
+use App\Jobs\Anomaly\DispatchAnomalyDetection;
 use App\Jobs\Notification\CreateUpcomingInvoiceDueNotifications;
 use App\Jobs\Notification\PruneReadNotifications;
 use App\Jobs\Report\DispatchWeeklyFinancialReports;
@@ -28,6 +31,24 @@ Schedule::job(new DispatchWeeklyFinancialReports)
 
 Schedule::job(new PruneReadNotifications)
     ->dailyAt('02:00')
+    ->timezone(config('notifications.timezone'))
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::job(new DispatchAnomalyDetection)
+    ->dailyAt('06:30')
+    ->timezone(config('notifications.timezone'))
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::job(new DispatchFinancialInsightRefresh)
+    ->dailyAt('07:00')
+    ->timezone(config('notifications.timezone'))
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::job(new PruneAiRuns)
+    ->dailyAt('02:30')
     ->timezone(config('notifications.timezone'))
     ->withoutOverlapping()
     ->onOneServer();

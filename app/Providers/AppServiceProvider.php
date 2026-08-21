@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Exceptions\Ai\AiProviderException;
 use App\Models\User;
+use App\Services\Ai\Contracts\AiProvider;
+use App\Services\Ai\Providers\GeminiProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -18,7 +21,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(AiProvider::class, function (): AiProvider {
+            $provider = (string) config('ai.provider', 'gemini');
+            $config = (array) config("ai.providers.{$provider}", []);
+
+            return match ($provider) {
+                'gemini' => new GeminiProvider($config),
+                default => throw new AiProviderException("Provider AI '{$provider}' tidak dikenal.", 'misconfigured'),
+            };
+        });
     }
 
     /**
@@ -67,6 +78,11 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('notification-management', fn (Request $request): Limit => Limit::perMinute(120)
             ->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
+        RateLimiter::for('ai-management', fn (Request $request): array => [
+            Limit::perMinute(20)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())),
+            Limit::perDay(200)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())),
+        ]);
 
         RateLimiter::for('blog-public', fn (Request $request): Limit => Limit::perMinute(120)
             ->by($request->ip()));

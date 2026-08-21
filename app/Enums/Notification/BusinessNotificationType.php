@@ -9,4 +9,6 @@ enum BusinessNotificationType: string
     case CustomerCreated = 'customer.created';
     case WeeklyReportReady = 'report.weekly_ready';
     case RevenueTargetReached = 'revenue.target_reached';
+    case AiInsightsReady = 'ai.insights_ready';
+    case AnomalyDetected = 'anomaly.detected';
 }

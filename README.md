@@ -24,6 +24,8 @@ Dokumentasi tersedia di:
 - [Tax Report API](docs/TAX_REPORT_API.md)
 - [Subscription API](docs/SUBSCRIPTION_API.md)
 - [Notification API](docs/NOTIFICATION_API.md)
+- [AI API](docs/AI_API.md)
+- [Anomaly Detection API](docs/ANOMALY_API.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 

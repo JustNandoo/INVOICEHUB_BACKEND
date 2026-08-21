@@ -26,6 +26,13 @@ class ReconciliationSuggestionResource extends JsonResource
             'differenceType' => $this->difference_type,
             'reasons' => $this->reasons,
             'status' => $this->status,
+            'ai' => $this->ai_run_id === null ? null : [
+                'runId' => $this->ai_run_id,
+                'rank' => $this->ai_rank,
+                'confidence' => $this->ai_confidence,
+                'reasons' => $this->ai_reasons,
+                'requiresReview' => (bool) $this->ai_requires_review,
+            ],
         ];
     }
 }

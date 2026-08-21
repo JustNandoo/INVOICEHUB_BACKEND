@@ -1,5 +1,12 @@
 <?php
 
+use App\Http\Controllers\Api\Ai\AiAnomalyExplanationController;
+use App\Http\Controllers\Api\Ai\AiFeedbackController;
+use App\Http\Controllers\Api\Ai\AiInsightController;
+use App\Http\Controllers\Api\Ai\AiReconciliationController;
+use App\Http\Controllers\Api\Ai\AiReminderDraftController;
+use App\Http\Controllers\Api\Ai\AiUsageController;
+use App\Http\Controllers\Api\Anomaly\AnomalyController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
 use App\Http\Controllers\Api\Blog\BlogController;
@@ -113,6 +120,69 @@ Route::prefix('v1')
         Route::get('/reconciliations', [ReconciliationController::class, 'index']);
         Route::post('/reconciliations', [ReconciliationController::class, 'store']);
         Route::post('/reconciliations/{reconciliation}/reverse', [ReconciliationController::class, 'reverse'])->whereNumber('reconciliation');
+    });
+
+Route::prefix('v1/ai')
+    ->middleware(['auth:sanctum', 'verified', 'throttle:ai-management'])
+    ->group(function (): void {
+        Route::get('/usage', [AiUsageController::class, 'show']);
+        Route::post('/runs/{aiRun}/feedback', [AiFeedbackController::class, 'store'])->whereNumber('aiRun');
+    });
+
+Route::prefix('v1')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:reconciliation-management',
+        'subscription.feature:anomaly.detection',
+    ])
+    ->group(function (): void {
+        Route::get('/anomalies/summary', [AnomalyController::class, 'summary']);
+        Route::get('/anomalies', [AnomalyController::class, 'index']);
+        Route::post('/anomalies/scan', [AnomalyController::class, 'scan']);
+        Route::post('/anomalies/{anomaly}/resolve', [AnomalyController::class, 'resolve'])->whereNumber('anomaly');
+    });
+
+Route::prefix('v1')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:ai-management',
+        'subscription.feature:anomaly.detection',
+        'subscription.feature:ai.anomaly_explanation',
+    ])
+    ->group(function (): void {
+        Route::post('/anomalies/{anomaly}/ai-explanation', [AiAnomalyExplanationController::class, 'store'])
+            ->whereNumber('anomaly');
+    });
+
+Route::prefix('v1/ai/insights')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:ai-management',
+        'subscription.feature:ai.insights',
+    ])
+    ->group(function (): void {
+        Route::get('/', [AiInsightController::class, 'index']);
+        Route::delete('/{insight}', [AiInsightController::class, 'destroy'])->whereNumber('insight');
+        Route::post('/refresh', [AiInsightController::class, 'refresh'])
+            ->middleware('subscription.feature:ai.on_demand_refresh');
+    });
+
+Route::prefix('v1')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:ai-management',
+        'subscription.feature:ai.reminder_draft',
+    ])
+    ->group(function (): void {
+        Route::post('/invoices/{invoice}/ai-reminder-draft', [AiReminderDraftController::class, 'store'])
+            ->whereNumber('invoice');
+    });
+
+Route::prefix('v1')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:ai-management',
+        'subscription.feature:reconciliation.automatic',
+        'subscription.feature:ai.reconciliation',
+    ])
+    ->group(function (): void {
+        Route::post('/bank-transactions/{bankTransaction}/ai-analysis', [AiReconciliationController::class, 'analyze'])
+            ->whereNumber('bankTransaction');
     });
 
 Route::prefix('v1')
