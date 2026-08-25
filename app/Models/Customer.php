@@ -40,12 +40,13 @@ class Customer extends Model
 
     public function latestInvoice(): HasOne
     {
-        return $this->hasOne(Invoice::class)
-            ->whereIn('status', [Invoice::STATUS_UNPAID, Invoice::STATUS_PAID])
-            ->ofMany([
-                'issue_date' => 'max',
-                'id' => 'max',
-            ]);
+        // Batasan status harus masuk ke dalam ofMany. Bila ditaruh di luar, subquery
+        // memilih invoice terbaru tanpa memandang status (misalnya draft), lalu baris
+        // itu tersaring keluar dan relasinya menjadi null.
+        return $this->hasOne(Invoice::class)->ofMany(
+            ['issue_date' => 'max', 'id' => 'max'],
+            fn ($query) => $query->whereIn('status', [Invoice::STATUS_UNPAID, Invoice::STATUS_PAID]),
+        );
     }
 
     protected function casts(): array

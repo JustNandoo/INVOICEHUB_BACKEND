@@ -96,6 +96,10 @@ return [
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
+            // Laravel bekerja dalam UTC. Tanpa ini, sesi PostgreSQL memakai zona waktu
+            // server sehingga timestamp naif ditafsirkan sebagai waktu lokal dan
+            // tersimpan meleset sebesar offset zona tersebut.
+            'timezone' => env('DB_TIMEZONE', 'UTC'),
             'sslmode' => env('DB_SSLMODE', 'prefer'),
         ],
 

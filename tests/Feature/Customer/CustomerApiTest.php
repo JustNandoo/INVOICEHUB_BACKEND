@@ -12,6 +12,28 @@ class CustomerApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_last_invoice_ignores_drafts_and_returns_the_newest_issued_invoice(): void
+    {
+        $user = User::factory()->create();
+        $this->activatePlan($user, 'basic');
+        $customer = Customer::factory()->for($user, 'owner')->create();
+
+        Invoice::factory()->for($user, 'owner')->for($customer)->create([
+            'number' => 'INV-ISSUED', 'status' => Invoice::STATUS_UNPAID,
+            'issue_date' => today()->subDays(5), 'due_date' => today()->addMonth(),
+        ]);
+        // Draft lebih baru: tidak boleh menutupi invoice yang sudah diterbitkan.
+        Invoice::factory()->for($user, 'owner')->for($customer)->create([
+            'number' => 'INV-DRAFT', 'status' => Invoice::STATUS_DRAFT,
+            'issue_date' => today(), 'due_date' => today()->addMonth(),
+        ]);
+
+        $this->withToken($user->createToken('test')->plainTextToken)
+            ->getJson('/api/v1/customers')
+            ->assertOk()
+            ->assertJsonPath('data.customers.0.lastInvoice.invoiceNumber', 'INV-ISSUED');
+    }
+
     public function test_customer_api_requires_verified_authentication(): void
     {
         $this->getJson('/api/v1/customers')->assertUnauthorized();
