@@ -28,6 +28,7 @@ return [
                 'ai.reminder_tones' => false,
                 'anomaly.detection' => false,
                 'ai.anomaly_explanation' => false,
+                'marketplace.integration' => false,
             ],
             'limits' => [
                 'monthlyInvoices' => 10, 'bankAccounts' => 0, 'stores' => 1,
@@ -67,6 +68,7 @@ return [
                 'ai.reminder_tones' => true,
                 'anomaly.detection' => true,
                 'ai.anomaly_explanation' => true,
+                'marketplace.integration' => true,
             ],
             'limits' => [
                 'monthlyInvoices' => null, 'bankAccounts' => 1, 'stores' => 1,
@@ -107,6 +109,7 @@ return [
                 'ai.reminder_tones' => true,
                 'anomaly.detection' => true,
                 'ai.anomaly_explanation' => true,
+                'marketplace.integration' => true,
             ],
             'limits' => [
                 'monthlyInvoices' => null, 'bankAccounts' => 3, 'stores' => null,

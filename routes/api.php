@@ -14,6 +14,9 @@ use App\Http\Controllers\Api\Blog\BlogManagementController;
 use App\Http\Controllers\Api\Customer\CustomerController;
 use App\Http\Controllers\Api\Customer\CustomerSearchController;
 use App\Http\Controllers\Api\Invoice\InvoiceController;
+use App\Http\Controllers\Api\Marketplace\MarketplaceCallbackController;
+use App\Http\Controllers\Api\Marketplace\MarketplaceConnectionController;
+use App\Http\Controllers\Api\Marketplace\MarketplaceOrderController;
 use App\Http\Controllers\Api\Notification\NotificationController;
 use App\Http\Controllers\Api\Notification\RevenueTargetController;
 use App\Http\Controllers\Api\Profile\ProfileController;
@@ -150,6 +153,26 @@ Route::prefix('v1')
     ->group(function (): void {
         Route::post('/anomalies/{anomaly}/ai-explanation', [AiAnomalyExplanationController::class, 'store'])
             ->whereNumber('anomaly');
+    });
+
+// Callback OAuth dipanggil marketplace, bukan browser pengguna, jadi tanpa Sanctum.
+// Keabsahannya dijamin state token sekali pakai.
+Route::get('/v1/marketplaces/callback', MarketplaceCallbackController::class)
+    ->middleware('throttle:30,1');
+
+Route::prefix('v1/marketplaces')
+    ->middleware([
+        'auth:sanctum', 'verified', 'throttle:reconciliation-management',
+        'subscription.feature:marketplace.integration',
+    ])
+    ->group(function (): void {
+        Route::get('/', [MarketplaceConnectionController::class, 'index']);
+        Route::post('/connect', [MarketplaceConnectionController::class, 'store']);
+        Route::delete('/{connection}', [MarketplaceConnectionController::class, 'destroy'])->whereNumber('connection');
+
+        Route::get('/orders', [MarketplaceOrderController::class, 'index']);
+        Route::post('/{connection}/sync', [MarketplaceOrderController::class, 'sync'])->whereNumber('connection');
+        Route::post('/{connection}/import', [MarketplaceOrderController::class, 'import'])->whereNumber('connection');
     });
 
 Route::prefix('v1/ai/insights')

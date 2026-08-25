@@ -3,6 +3,7 @@
 use App\Jobs\Ai\DispatchFinancialInsightRefresh;
 use App\Jobs\Ai\PruneAiRuns;
 use App\Jobs\Anomaly\DispatchAnomalyDetection;
+use App\Jobs\Marketplace\DispatchMarketplaceSync;
 use App\Jobs\Notification\CreateUpcomingInvoiceDueNotifications;
 use App\Jobs\Notification\PruneReadNotifications;
 use App\Jobs\Report\DispatchWeeklyFinancialReports;
@@ -31,6 +32,12 @@ Schedule::job(new DispatchWeeklyFinancialReports)
 
 Schedule::job(new PruneReadNotifications)
     ->dailyAt('02:00')
+    ->timezone(config('notifications.timezone'))
+    ->withoutOverlapping()
+    ->onOneServer();
+
+Schedule::job(new DispatchMarketplaceSync)
+    ->hourly()
     ->timezone(config('notifications.timezone'))
     ->withoutOverlapping()
     ->onOneServer();
