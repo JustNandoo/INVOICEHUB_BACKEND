@@ -64,6 +64,78 @@ Link verifikasi memiliki signature dan kedaluwarsa setelah 60 menit. Endpoint ki
 
 Pengiriman email menggunakan Laravel SMTP melalui Gmail. Ikuti [EMAIL_DELIVERY.md](EMAIL_DELIVERY.md) untuk membuat App Password dan menguji pengiriman nyata. Jangan pernah memasukkan credential email ke Git.
 
+## Lupa password
+
+Tiga langkah: minta tautan, tautan diverifikasi, lalu password diganti. Token dibuat dan diperiksa oleh broker bawaan Laravel (`config/auth.php` → `passwords.users`), berlaku 60 menit, hanya sekali pakai, dan disimpan dalam bentuk hash.
+
+### 1. Minta tautan
+
+`POST /auth/password/forgot`
+
+```json
+{ "email": "budi@example.com" }
+```
+
+Balasannya **selalu sama** baik email terdaftar maupun tidak — membedakannya akan membuat endpoint ini bisa dipakai memetakan siapa saja yang punya akun InvoiceHub.
+
+```json
+{
+  "success": true,
+  "message": "Bila email tersebut terdaftar, tautan untuk mengatur ulang password sudah kami kirim. Periksa juga folder spam.",
+  "data": { "emailSent": true }
+}
+```
+
+Dibatasi 3 permintaan per menit per kombinasi email+IP, dan 10 per jam per IP.
+
+Tautan di email mengarah ke **halaman frontend**, bukan ke API:
+
+```
+{FRONTEND_PASSWORD_RESET_URL}?token=<token>&email=<email>
+```
+
+### 2. Periksa tautan
+
+`GET /auth/password/verify?token=<token>&email=<email>`
+
+Dipanggil halaman reset sebelum formulir ditampilkan, supaya pengguna tidak mengetik password baru untuk tautan yang ternyata sudah kedaluwarsa.
+
+```json
+{ "success": true, "data": { "valid": true, "email": "budi@example.com" } }
+```
+
+Tautan tidak sah membalas `422` dengan `error.code` = `RESET_TOKEN_INVALID`.
+
+### 3. Ganti password
+
+`POST /auth/password/reset`
+
+```json
+{
+  "token": "<token dari tautan>",
+  "email": "budi@example.com",
+  "password": "PasswordBaru9",
+  "passwordConfirmation": "PasswordBaru9"
+}
+```
+
+Aturan password sama dengan registrasi. Setelah berhasil:
+
+- `password_changed_at` diperbarui
+- `remember_token` diputar ulang
+- **seluruh token Sanctum dihapus**, sehingga semua perangkat yang masih memegang sesi lama ikut keluar
+- token reset langsung hangus dan tidak dapat dipakai kedua kali
+
+Tautan kedaluwarsa, sudah terpakai, atau milik akun lain sama-sama membalas `422` `RESET_TOKEN_INVALID`.
+
+### Konfigurasi
+
+```dotenv
+FRONTEND_PASSWORD_RESET_URL="${FRONTEND_URL}/reset-password"
+```
+
+Masa berlaku tautan diatur di `config/auth.php` → `passwords.users.expire` (menit).
+
 ## User aktif
 
 `GET /auth/me`

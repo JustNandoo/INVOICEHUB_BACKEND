@@ -84,6 +84,13 @@ class AppServiceProvider extends ServiceProvider
             Limit::perDay(200)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())),
         ]);
 
+        // Setiap panggilan membuat order baru di Midtrans, jadi dibatasi lebih ketat
+        // daripada endpoint baca biasa.
+        RateLimiter::for('subscription-checkout', fn (Request $request): array => [
+            Limit::perMinute(6)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())),
+            Limit::perDay(50)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())),
+        ]);
+
         RateLimiter::for('blog-public', fn (Request $request): Limit => Limit::perMinute(120)
             ->by($request->ip()));
 
@@ -95,6 +102,16 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('auth-login', fn (Request $request): Limit => Limit::perMinute(5)
             ->by($this->emailAndIpKey($request)));
+
+        // Dibatasi per email sekaligus per IP: mencegah satu akun dibanjiri email
+        // reset, sekaligus mencegah satu IP memindai banyak alamat sekaligus.
+        RateLimiter::for('auth-password-forgot', fn (Request $request): array => [
+            Limit::perMinute(3)->by($this->emailAndIpKey($request)),
+            Limit::perHour(10)->by($request->ip()),
+        ]);
+
+        RateLimiter::for('auth-password-reset', fn (Request $request): Limit => Limit::perMinute(10)
+            ->by($request->ip()));
 
         RateLimiter::for('auth-verification-resend', fn (Request $request): array => [
             Limit::perMinute(3)->by($this->emailAndIpKey($request)),

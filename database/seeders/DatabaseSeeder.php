@@ -15,5 +15,9 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call(BlogPostSeeder::class);
+
+        if ($this->container->environment('local')) {
+            $this->call(DemoAccountSeeder::class);
+        }
     }
 }

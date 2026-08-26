@@ -24,6 +24,125 @@ class BlogPostSeeder extends Seeder
     {
         return [
             [
+                'slug' => 'pph-final-umkm-2026-panduan-praktis-pemilik-usaha',
+                'title' => 'PPh Final UMKM 2026: Panduan Praktis untuk Pemilik Usaha',
+                'excerpt' => 'Pahami tarif 0,5%, batas omzet, dan catatan bulanan yang perlu disiapkan agar kewajiban pajak usaha lebih teratur.',
+                'category' => 'Panduan Pajak',
+                'cover_image_url' => '/images/blog-featured-tax.png',
+                'cover_image_alt' => 'Ilustrasi pemilik UMKM memeriksa laporan pajak',
+                'author_name' => 'Tim Pajak InvoiceHub',
+                'reading_time_minutes' => 8,
+                'is_featured' => true,
+                'published_at' => '2026-08-20 09:00:00',
+                'content' => [
+                    [
+                        'heading' => null,
+                        'paragraphs' => [
+                            'Skema PPh Final membantu pelaku UMKM menghitung pajak menggunakan peredaran bruto. Tarif yang berlaku adalah 0,5% bagi wajib pajak yang memenuhi persyaratan dan memiliki omzet tahunan tidak lebih dari Rp4,8 miliar.',
+                            'Untuk wajib pajak orang pribadi, bagian omzet sampai Rp500 juta dalam satu tahun tetap tidak dikenai PPh. Karena batas tersebut dihitung secara tahunan, rekap omzet bulanan harus disimpan secara berurutan.',
+                        ],
+                        'bullets' => [],
+                    ],
+                    [
+                        'heading' => 'Catatan yang perlu disiapkan setiap bulan',
+                        'paragraphs' => ['Gunakan invoice lunas dan mutasi yang sudah direkonsiliasi sebagai dasar pencatatan. Pisahkan transaksi yang masih menunggu verifikasi agar tidak dihitung dua kali.'],
+                        'bullets' => [
+                            'Rekap omzet seluruh kanal penjualan, termasuk marketplace.',
+                            'Bukti pembayaran pelanggan dan settlement marketplace.',
+                            'Daftar retur, refund, serta transaksi yang dibatalkan.',
+                            'Bukti pembayaran dan pelaporan pajak pada periode sebelumnya.',
+                        ],
+                    ],
+                    [
+                        'heading' => 'Periksa kelayakan skema secara berkala',
+                        'paragraphs' => [
+                            'Tarif dan fasilitas hanya dapat digunakan selama usaha memenuhi kriteria yang berlaku. Saat bentuk usaha, omzet, atau sumber penghasilan berubah, lakukan pemeriksaan kembali atau konsultasikan dengan petugas pajak.',
+                            'Referensi resmi: Direktorat Jenderal Pajak, “PPh Final UMKM Tetap 0,5 Persen, DJP Perkuat Ketepatan Sasaran” — https://pajak.go.id/id/siaran-pers/pph-final-umkm-tetap-05-persen-djp-perkuat-ketepatan-sasaran',
+                        ],
+                        'bullets' => [],
+                    ],
+                ],
+            ],
+            [
+                'slug' => 'pencatatan-keuangan-digital-agar-umkm-naik-kelas',
+                'title' => 'Pencatatan Keuangan Digital agar UMKM Naik Kelas',
+                'excerpt' => 'Bangun kebiasaan pencatatan sederhana yang membantu pemilik usaha memahami performa dan menyiapkan akses pembiayaan.',
+                'category' => 'Tips Keuangan',
+                'cover_image_url' => '/images/blog-personal-business.png',
+                'cover_image_alt' => 'Ilustrasi pencatatan keuangan digital untuk UMKM',
+                'author_name' => 'Tim Edukasi InvoiceHub',
+                'reading_time_minutes' => 7,
+                'is_featured' => false,
+                'published_at' => '2026-08-12 09:00:00',
+                'content' => [
+                    [
+                        'heading' => null,
+                        'paragraphs' => [
+                            'Pencatatan bukan hanya kebutuhan saat membayar pajak. Data transaksi yang konsisten membantu pemilik melihat arus kas, laba rugi, kebutuhan modal, dan kemampuan usaha membayar kewajiban.',
+                            'Bank Indonesia menempatkan pencatatan keuangan sebagai salah satu fondasi agar laporan UMKM lebih mudah dipahami lembaga keuangan ketika usaha membutuhkan pembiayaan.',
+                        ],
+                        'bullets' => [],
+                    ],
+                    [
+                        'heading' => 'Rutinitas singkat yang dapat dimulai hari ini',
+                        'paragraphs' => ['Tidak perlu menunggu sistem yang rumit. Mulai dari proses yang dapat dilakukan setiap hari dan evaluasi hasilnya pada akhir minggu.'],
+                        'bullets' => [
+                            'Catat setiap penjualan dan biaya pada hari transaksi.',
+                            'Pisahkan rekening usaha dari rekening pribadi.',
+                            'Cocokkan mutasi bank dengan invoice secara berkala.',
+                            'Tinjau piutang, persediaan, dan arus kas setiap minggu.',
+                        ],
+                    ],
+                    [
+                        'heading' => 'Gunakan laporan sebagai alat keputusan',
+                        'paragraphs' => [
+                            'Laporan yang rapi membantu menentukan produk yang menguntungkan, waktu pembelian stok, dan batas pengeluaran yang aman. Nilai utamanya bukan banyaknya laporan, melainkan keputusan yang dapat diambil dari data tersebut.',
+                            'Referensi resmi: Bank Indonesia, Pedoman Pencatatan Transaksi Keuangan untuk UMK — https://www.bi.go.id/id/umkm/penelitian/Pages/Pedoman-Umum-Pedoman-Teknis-dan-Modul-PTK-untuk-UMK.aspx',
+                        ],
+                        'bullets' => [],
+                    ],
+                ],
+            ],
+            [
+                'slug' => 'strategi-rapi-berjualan-di-banyak-marketplace',
+                'title' => 'Strategi Rapi Berjualan di Banyak Marketplace',
+                'excerpt' => 'Satukan data pesanan, pelanggan, biaya platform, dan pencairan dana agar ekspansi kanal penjualan tidak membuat pembukuan berantakan.',
+                'category' => 'Tips Keuangan',
+                'cover_image_url' => '/images/blog-whatsapp-feature.png',
+                'cover_image_alt' => 'Ilustrasi UMKM mengelola penjualan dari berbagai kanal digital',
+                'author_name' => 'Tim Bisnis Digital InvoiceHub',
+                'reading_time_minutes' => 6,
+                'is_featured' => false,
+                'published_at' => '2026-08-07 09:00:00',
+                'content' => [
+                    [
+                        'heading' => null,
+                        'paragraphs' => [
+                            'Menambah marketplace dapat memperluas jangkauan usaha, tetapi juga menambah sumber pesanan, potongan, refund, dan jadwal settlement. Tanpa identitas transaksi yang konsisten, omzet mudah tercatat ganda atau justru terlewat.',
+                        ],
+                        'bullets' => [],
+                    ],
+                    [
+                        'heading' => 'Gunakan satu alur untuk seluruh kanal',
+                        'paragraphs' => ['Tentukan data minimum yang harus tersedia pada setiap pesanan sebelum masuk ke pembukuan utama.'],
+                        'bullets' => [
+                            'Simpan nomor pesanan asli dari setiap marketplace.',
+                            'Pisahkan harga barang, ongkir, diskon, dan biaya platform.',
+                            'Hubungkan settlement bank dengan kelompok pesanan terkait.',
+                            'Gunakan data pelanggan yang sama untuk menghindari duplikasi.',
+                        ],
+                    ],
+                    [
+                        'heading' => 'Jaga kendali atas data usaha',
+                        'paragraphs' => [
+                            'Ekosistem perdagangan digital terus bergerak menuju layanan yang lebih terhubung. Pemilik UMKM tetap perlu mempunyai catatan internal yang dapat digunakan lintas platform agar keputusan bisnis tidak bergantung pada satu dashboard marketplace.',
+                            'Referensi resmi: Kementerian Komunikasi dan Digital, “ION Mudahkan UMKM Bertransaksi Lintas Aplikasi” — https://www.komdigi.go.id/berita/siaran-pers/detail/wamen-nezar-ion-mudahkan-umkm-bertransaksi-lintas-aplikasi',
+                        ],
+                        'bullets' => [],
+                    ],
+                ],
+            ],
+            [
                 'slug' => 'panduan-lengkap-lapor-spt-pajak-umkm-2024',
                 'title' => 'Panduan Lengkap Lapor SPT Pajak UMKM 2024',
                 'excerpt' => 'Pahami langkah demi langkah cara melaporkan SPT tahunan untuk usaha kecil menengah agar terhindar dari denda.',
@@ -32,7 +151,7 @@ class BlogPostSeeder extends Seeder
                 'cover_image_alt' => 'Ilustrasi pemilik UMKM menyiapkan laporan pajak',
                 'author_name' => 'Tim Pajak InvoiceHub',
                 'reading_time_minutes' => 8,
-                'is_featured' => true,
+                'is_featured' => false,
                 'published_at' => '2024-10-12 09:00:00',
                 'content' => [
                     [

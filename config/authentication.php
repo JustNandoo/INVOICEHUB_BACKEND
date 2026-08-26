@@ -7,6 +7,17 @@ return [
         'remember_expires_in_minutes' => (int) env('AUTH_TOKEN_REMEMBER_EXPIRES_IN', 43200),
     ],
 
+    /*
+     | Masa berlaku tautan reset diambil dari broker bawaan Laravel
+     | (config/auth.php -> passwords.users.expire) supaya hanya ada satu sumber angka.
+     */
+    'password_reset' => [
+        'url' => env(
+            'FRONTEND_PASSWORD_RESET_URL',
+            rtrim((string) env('FRONTEND_URL', 'https://invoicehub.my.id'), '/').'/reset-password',
+        ),
+    ],
+
     'email_verification' => [
         'expires_in_minutes' => (int) env('EMAIL_VERIFICATION_EXPIRES_IN', 60),
     ],
@@ -14,7 +25,7 @@ return [
     'frontend' => [
         'email_verified_url' => env(
             'FRONTEND_EMAIL_VERIFIED_URL',
-            rtrim((string) env('FRONTEND_URL', 'http://localhost:5174'), '/').'/login?email_verified=1',
+            rtrim((string) env('FRONTEND_URL', 'https://invoicehub.my.id'), '/').'/login?email_verified=1',
         ),
     ],
 ];

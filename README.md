@@ -27,6 +27,7 @@ Dokumentasi tersedia di:
 - [AI API](docs/AI_API.md)
 - [Anomaly Detection API](docs/ANOMALY_API.md)
 - [Marketplace Integration API](docs/MARKETPLACE_API.md)
+- [Akun demo lengkap](docs/DEMO_ACCOUNT.md)
 
 Jalankan pemeriksaan kode dan test dengan:
 

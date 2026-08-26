@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Ai\AiUsageController;
 use App\Http\Controllers\Api\Anomaly\AnomalyController;
 use App\Http\Controllers\Api\Auth\AuthController;
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\Blog\BlogController;
 use App\Http\Controllers\Api\Blog\BlogManagementController;
 use App\Http\Controllers\Api\Customer\CustomerController;
@@ -25,10 +26,12 @@ use App\Http\Controllers\Api\Reconciliation\BankTransactionController;
 use App\Http\Controllers\Api\Reconciliation\BankTransactionImportController;
 use App\Http\Controllers\Api\Reconciliation\ReconciliationController;
 use App\Http\Controllers\Api\Report\WeeklyFinancialReportController;
+use App\Http\Controllers\Api\Subscription\SubscriptionCheckoutController;
 use App\Http\Controllers\Api\Subscription\SubscriptionController;
 use App\Http\Controllers\Api\Tax\TaxAuditFindingController;
 use App\Http\Controllers\Api\Tax\TaxpayerProfileController;
 use App\Http\Controllers\Api\Tax\TaxReportController;
+use App\Http\Controllers\Api\Webhook\MidtransWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')
@@ -77,7 +80,14 @@ Route::prefix('v1/subscription')
         Route::get('/', [SubscriptionController::class, 'show']);
         Route::get('/usage', [SubscriptionController::class, 'usage']);
         Route::get('/payment-history', [SubscriptionController::class, 'paymentHistory']);
+        Route::post('/checkout', [SubscriptionCheckoutController::class, 'store'])
+            ->middleware('throttle:subscription-checkout');
     });
+
+// Notifikasi Midtrans dipanggil server mereka, bukan browser pengguna, jadi tanpa
+// Sanctum. Keabsahannya dijamin signature_key yang diverifikasi di service.
+Route::post('/v1/webhooks/midtrans', MidtransWebhookController::class)
+    ->middleware('throttle:120,1');
 
 Route::prefix('v1')
     ->middleware(['auth:sanctum', 'verified', 'throttle:customer-management'])
@@ -261,6 +271,15 @@ Route::prefix('v1/auth')->group(function (): void {
 
     Route::post('/email/resend', [EmailVerificationController::class, 'resend'])
         ->middleware('throttle:auth-verification-resend');
+
+    Route::post('/password/forgot', [PasswordResetController::class, 'forgot'])
+        ->middleware('throttle:auth-password-forgot');
+
+    Route::get('/password/verify', [PasswordResetController::class, 'verify'])
+        ->middleware('throttle:auth-password-reset');
+
+    Route::post('/password/reset', [PasswordResetController::class, 'reset'])
+        ->middleware('throttle:auth-password-reset');
 
     Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
         ->middleware(['signed', 'throttle:6,1'])

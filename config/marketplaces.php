@@ -84,6 +84,6 @@ return [
      */
     'frontend_return_url' => env(
         'MARKETPLACE_RETURN_URL',
-        rtrim((string) env('FRONTEND_URL', 'http://localhost:5174'), '/').'/settings/integrations',
+        rtrim((string) env('FRONTEND_URL', 'https://invoicehub.my.id'), '/').'/settings/integrations',
     ),
 ];

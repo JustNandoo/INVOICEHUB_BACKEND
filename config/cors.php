@@ -2,7 +2,7 @@
 
 $allowedOrigins = array_values(array_filter(array_map(
     'trim',
-    explode(',', (string) env('CORS_ALLOWED_ORIGINS', 'http://localhost:5174')),
+    explode(',', (string) env('CORS_ALLOWED_ORIGINS', 'https://invoicehub.my.id')),
 )));
 
 return [
