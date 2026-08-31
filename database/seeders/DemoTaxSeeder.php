@@ -15,7 +15,7 @@ class DemoTaxSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::query()->where('email', DemoAccountSeeder::EMAIL)->firstOrFail();
+        $user = User::query()->where('email', DemoAccountSeeder::email())->firstOrFail();
         app(TaxpayerProfileService::class)->update($user, [
             'taxpayerType' => 'entity',
             'taxpayerName' => 'Rani Prameswari',

@@ -31,7 +31,7 @@ class DemoEngagementSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::query()->where('email', DemoAccountSeeder::EMAIL)->firstOrFail();
+        $user = User::query()->where('email', DemoAccountSeeder::email())->firstOrFail();
         $run = $this->createAiInsights($user);
         $this->createAnomalies($user, $run);
         $this->createReportsTargetsAndNotifications($user);

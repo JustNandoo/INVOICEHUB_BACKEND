@@ -16,7 +16,7 @@ class DemoFinanceSeeder extends Seeder
 {
     public function run(): void
     {
-        $user = User::query()->where('email', DemoAccountSeeder::EMAIL)->firstOrFail();
+        $user = User::query()->where('email', DemoAccountSeeder::email())->firstOrFail();
         [$accounts, $imports] = $this->createBankAccounts($user);
         $this->createMatchedTransactions($user, $accounts, $imports);
         $this->createReviewTransactions($user, $accounts[0], $imports[$accounts[0]->id]);

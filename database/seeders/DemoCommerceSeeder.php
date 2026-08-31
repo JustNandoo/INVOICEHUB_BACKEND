@@ -42,7 +42,7 @@ class DemoCommerceSeeder extends Seeder
 
     public function run(): void
     {
-        $user = User::query()->where('email', DemoAccountSeeder::EMAIL)->firstOrFail();
+        $user = User::query()->where('email', DemoAccountSeeder::email())->firstOrFail();
         $customers = $this->createCustomers($user);
         $invoices = $this->createInvoices($user, $customers);
         $this->createMarketplaceData($user, $customers, $invoices);

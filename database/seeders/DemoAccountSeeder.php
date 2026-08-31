@@ -15,10 +15,37 @@ class DemoAccountSeeder extends Seeder
 
     public const PASSWORD = 'DemoInvoiceHub2026!';
 
+    /**
+     * Akun yang diisi oleh seeder demo.
+     *
+     * Dipisahkan dari konstanta EMAIL supaya isi demo bisa diarahkan ke akun lain tanpa
+     * menyunting berkas — cukup disetel sebelum seeder isinya dijalankan. Sengaja memakai
+     * properti statis, bukan env(), karena produksi menjalankan config:cache dan env()
+     * di luar berkas config akan mengembalikan null di sana.
+     */
+    public static string $targetEmail = self::EMAIL;
+
+    public static function email(): string
+    {
+        return static::$targetEmail;
+    }
+
     public function run(): void
     {
+        /*
+         * Seeder ini menghapus lalu membuat ulang penggunanya. Aman untuk akun demo bawaan
+         * di mesin pengembang, tetapi menjalankannya di produksi berarti menghapus akun
+         * sungguhan beserta seluruh datanya. Seeder isinya (Commerce, Finance, Tax,
+         * Engagement) tidak menghapus apa pun dan tetap boleh dijalankan di mana saja.
+         */
+        if (app()->environment('production')) {
+            $this->command?->error('DemoAccountSeeder menghapus dan membuat ulang pengguna. Dilarang jalan di produksi.');
+
+            return;
+        }
+
         $user = DB::transaction(function (): User {
-            $existing = User::query()->where('email', self::EMAIL)->first();
+            $existing = User::query()->where('email', self::email())->first();
 
             if ($existing) {
                 DatabaseNotification::query()
@@ -32,7 +59,7 @@ class DemoAccountSeeder extends Seeder
             $user = User::query()->create([
                 'name' => 'Rani Prameswari',
                 'business_name' => 'Kopi Karsa Nusantara',
-                'email' => self::EMAIL,
+                'email' => self::email(),
                 'password' => self::PASSWORD,
                 'terms_accepted_at' => $now->subYear(),
                 'whatsapp' => '+6281234567890',
