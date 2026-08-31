@@ -78,7 +78,7 @@ class CustomerService
             ->where('status', Invoice::STATUS_UNPAID)->where('balance_due', '>', 0)->sum('balance_due');
         if ($outstanding > 0) {
             throw ValidationException::withMessages([
-                'customer' => ['Customer cannot be deleted while outstanding invoices remain. Deactivate the customer instead.'],
+                'customer' => ['Pelanggan tidak dapat dihapus selama masih ada tagihan berjalan. Nonaktifkan pelanggan sebagai gantinya.'],
             ]);
         }
 

@@ -29,6 +29,8 @@ Dokumentasi tersedia di:
 - [Marketplace Integration API](docs/MARKETPLACE_API.md)
 - [Akun demo lengkap](docs/DEMO_ACCOUNT.md)
 
+Cara men-deploy ke produksi ada di [DEPLOY.md](DEPLOY.md).
+
 Jalankan pemeriksaan kode dan test dengan:
 
 ```bash

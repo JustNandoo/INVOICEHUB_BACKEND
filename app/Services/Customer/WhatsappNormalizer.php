@@ -11,7 +11,7 @@ class WhatsappNormalizer
     {
         $digits = preg_replace('/\D+/', '', trim($value));
         if (! $digits) {
-            throw ValidationException::withMessages(['whatsapp' => ['Enter a valid WhatsApp number.']]);
+            throw ValidationException::withMessages(['whatsapp' => ['Masukkan nomor WhatsApp yang valid.']]);
         }
 
         if (str_starts_with($digits, '0')) {

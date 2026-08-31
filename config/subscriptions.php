@@ -123,6 +123,7 @@ return [
                 ['label' => 'Deteksi kebocoran arus kas', 'included' => true],
                 ['label' => 'Pemeriksaan pajak otomatis', 'included' => true],
                 ['label' => 'Laporan pajak tahunan', 'included' => true],
+                ['label' => 'Rekomendasi tindakan dari AI', 'included' => true],
             ],
         ],
     ],

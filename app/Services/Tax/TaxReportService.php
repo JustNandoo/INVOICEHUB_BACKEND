@@ -29,7 +29,7 @@ class TaxReportService
 
         if (! $profile) {
             throw ValidationException::withMessages([
-                'taxProfile' => ['Complete your tax profile before calculating a tax report.'],
+                'taxProfile' => ['Lengkapi profil pajak Anda sebelum menghitung laporan pajak.'],
             ]);
         }
 
@@ -74,7 +74,7 @@ class TaxReportService
             ])->lockForUpdate()->first();
 
             if ($existing?->isLocked()) {
-                throw ValidationException::withMessages(['report' => ['A finalized report cannot be recalculated.']]);
+                throw ValidationException::withMessages(['report' => ['Laporan yang sudah difinalkan tidak dapat dihitung ulang.']]);
             }
 
             $this->ledger->syncInvoicePayments($user, $year);
@@ -122,7 +122,7 @@ class TaxReportService
 
             if ($report->status === TaxPeriodReport::STATUS_REVISION_REQUIRED) {
                 throw ValidationException::withMessages([
-                    'report' => ['Recalculate this report after changing its tax ledger.'],
+                    'report' => ['Hitung ulang laporan ini setelah buku pajaknya berubah.'],
                 ]);
             }
 
@@ -130,7 +130,7 @@ class TaxReportService
                 ->where('status', TaxAuditFinding::STATUS_OPEN)->count();
             if ($openFindings > 0) {
                 throw ValidationException::withMessages([
-                    'report' => ["Resolve {$openFindings} open tax finding(s) before finalizing this report."],
+                    'report' => ["Selesaikan {$openFindings} temuan pajak yang masih terbuka sebelum memfinalkan laporan ini."],
                 ]);
             }
 
@@ -150,7 +150,7 @@ class TaxReportService
     {
         $report = $this->ownedReport($user, $year, $month, true);
         if (! $report->isLocked()) {
-            throw ValidationException::withMessages(['report' => ['Finalize this report before marking it as reported.']]);
+            throw ValidationException::withMessages(['report' => ['Finalkan laporan ini sebelum menandainya sudah dilaporkan.']]);
         }
 
         $report->update([

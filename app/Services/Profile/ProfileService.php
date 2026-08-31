@@ -125,7 +125,7 @@ class ProfileService
             $digits = '62'.$digits;
         }
         if (! $digits || ! preg_match('/^[1-9][0-9]{9,14}$/', $digits)) {
-            throw ValidationException::withMessages(['whatsapp' => ['Enter a valid WhatsApp number with its country code.']]);
+            throw ValidationException::withMessages(['whatsapp' => ['Masukkan nomor WhatsApp yang valid beserta kode negaranya.']]);
         }
 
         return ['display' => '+'.$digits, 'normalized' => $digits];
